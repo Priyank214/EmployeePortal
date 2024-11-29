@@ -1,0 +1,156 @@
+﻿@model List<Employee>
+@{
+    ViewData["Title"] = "DIGIWHIZ";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/employess.css" asp-append-version="true" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<div class="container">
+   
+    <div class="banner">
+        <img src="~/images/innerBanner.png" class="banner-image" alt="Inner Banner" />
+        <div class="banner-text">Employees</div>
+    </div>
+
+    
+    <div class="employee-header">
+        <h2>Employee Details</h2>
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search by First name" />
+            <button class="btn btn-secondary" onclick="searchEmployees()">Search</button>
+            <button class="btn btn-secondary" onclick="showAllEmployees()">Show All</button>
+        </div>
+    </div>
+
+    
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="employeeList">
+               
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Function to fetch all employees (without search filter)
+    function fetchEmployees() {
+        document.getElementById('searchInput').value = '';
+        fetch('/api/employees')
+            .then(response => response.json())
+            .then(data => {
+                
+                if (Array.isArray(data)) {
+                    console.log('All employees received:', data);
+                    const tableBody = document.getElementById('employeeList');
+                    tableBody.innerHTML = ''; // Clear the table before rendering
+
+                    if (data.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="4">No employees found</td></tr>';
+                        return;
+                    }
+
+                    
+                    data.forEach(employee => {
+                        if (employee && employee.firstName && employee.lastName && employee.email) {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${employee.firstName}</td>
+                                <td>${employee.lastName}</td>
+                                <td>${employee.email}</td>
+                                <td><button class="btn btn-danger" onclick="deleteEmployee('${employee.id}')">Delete</button></td>
+                            `;
+                            tableBody.appendChild(row);
+                        } else {
+                            console.error('Malformed employee data:', employee);
+                        }
+                    });
+                } else {
+                    console.error('Expected an array of employees, but received:', data);
+                }
+            })
+            .catch(error => console.error('Error fetching employees:', error));
+    }
+
+    
+    function searchEmployees() {
+        const searchValue = document.getElementById('searchInput').value.trim();
+
+        
+        if (!searchValue) {
+            fetchEmployees();
+            return;
+        }
+
+        fetch(`/api/employees/search?firstName=${searchValue}`)
+            .then(response => response.json())
+            .then(data => {
+               
+                if (Array.isArray(data)) {
+                    console.log('Search result received:', data);
+                    const tableBody = document.getElementById('employeeList');
+                    tableBody.innerHTML = ''; // Clear the table before re-rendering
+
+                    if (data.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="4">No employees found</td></tr>';
+                        return;
+                    }
+
+                   
+                    data.forEach(employee => {
+                        if (employee && employee.firstName && employee.lastName && employee.email) {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${employee.firstName}</td>
+                                <td>${employee.lastName}</td>
+                                <td>${employee.email}</td>
+                                <td><button class="btn btn-danger" onclick="deleteEmployee('${employee.id}')">Delete</button></td>
+                            `;
+                            tableBody.appendChild(row);
+                        } else {
+                            console.error('Malformed employee data:', employee);
+                        }
+                    });
+                } else {
+                    console.error('Expected an array of employees, but received:', data);
+                }
+            })
+            .catch(error => console.error('Error searching employees:', error));
+    }
+
+    // Function to show all employees (clear search filter)
+    function showAllEmployees() {
+        document.getElementById('searchInput').value = ''; 
+        fetchEmployees(); // Fetch and show all employees
+    }
+
+    function deleteEmployee(id) {
+        if (confirm('Are you sure you want to delete this employee?')) {
+            fetch(`/api/employees/${id}`, {
+                method: 'DELETE',
+            })
+            .then(response => {
+                if (response.ok) {
+                    fetchEmployees(); 
+                } else {
+                    alert('Employee Not Found.');
+                }
+            })
+            .catch(error => console.error('Error deleting employee:', error));
+        }
+    }
+
+   
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchEmployees();
+    });
+</script>

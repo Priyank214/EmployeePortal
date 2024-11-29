@@ -1,0 +1,52 @@
+﻿@using EmployeePortal.ViewModels
+@model LoginViewModel;
+@{
+    ViewData["Title"] = "DIGIWHIZ";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+<link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+<div class="div">
+    <div class="div-10">
+        <img loading="lazy" src="~/images/Banner.png" class="img-3" alt="Banner Image" />
+        <div class="div-11">
+            <div class="div-12">
+                <div class="div-13">We do big things with big ideas</div>
+                <div class="div-14">
+                    Talk to our experts and get your dream home done. If you dream of designing a new home that takes full advantage of the unique geography and views of land that you love.
+                </div>
+                <button onclick="scrollToLoginForm()" class="div-15">Explore Now</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="container mt-5">
+        <h2 class="text-center">Employee Login</h2>
+        <p class="text-center">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.
+        </p>
+        <div class="container mt-4">
+            <form id="loginForm" asp-action="Login" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group col-lg-6">
+                    <input type="email" asp-for="Email" class="form-control" id="email" placeholder="Enter email" />
+                    <div class="error-message" id="emailError">Please enter a valid email address.</div>
+                </div>
+                <div class="form-group col-lg-6">
+                    <input type="password" asp-for="Password" class="form-control" id="password" placeholder="Password" />
+                    <div class="error-message" id="passwordError">Please enter your password.</div>
+                </div>
+                <input id="submit" type="submit" value="Sign in" class="btn btn-primary btn-block col-lg-6" />
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function scrollToLoginForm() {
+        const loginForm = document.getElementById("loginForm");
+        loginForm.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
